@@ -1,0 +1,133 @@
+### ===================================================================
+### BATERÍA DE PRUEBAS HTTP - ARTES MARCIALES API (DWES)
+### ===================================================================
+
+@baseUrl = http://localhost:8080/api/artes-marciales
+
+### 1. GET - Listar todas las artes marciales precargadas (HTTP 200 OK)
+GET {{baseUrl}}
+Accept: application/json
+
+### 2. GET - Filtrar por nombre parcial (HTTP 200 OK)
+GET {{baseUrl}}?nombre=karate
+Accept: application/json
+
+### 3. GET - Filtrar por país de origen (HTTP 200 OK)
+GET {{baseUrl}}?pais=Japon
+Accept: application/json
+
+### 4. GET - Obtener detalle por ID existente (HTTP 200 OK)
+GET {{baseUrl}}/1
+Accept: application/json
+
+### 5. GET - Obtener Mashup Híbrido (BD H2 + API Externa REST Countries) (HTTP 200 OK)
+GET {{baseUrl}}/1/mashup
+Accept: application/json
+
+### 6. POST - Crear nuevo Arte Marcial válido (HTTP 201 Created)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "codigoFederacion": "AM-TH-005",
+  "nombre": "Muay Thai",
+  "paisOrigen": "Tailandia",
+  "disciplinaOlimpica": false,
+  "cuotaMensual": 65.00,
+  "aniosHistoria": 300,
+  "emailFederacion": "info@muaythai.th",
+  "fechaFundacion": "1767-04-07",
+  "tecnicasPrincipales": [
+    "Teep",
+    "Sok Ti",
+    "Khao Loi"
+  ],
+  "normativaVerificada": true
+}
+
+### 7. PUT - Reemplazo completo de un Arte Marcial (HTTP 200 OK)
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "codigoFederacion": "AM-JP-001",
+  "nombre": "Karate Shotokan Tradicional",
+  "paisOrigen": "Japon",
+  "disciplinaOlimpica": true,
+  "cuotaMensual": 58.00,
+  "aniosHistoria": 104,
+  "emailFederacion": "contacto@karateshotokan.jp",
+  "fechaFundacion": "1922-05-01",
+  "tecnicasPrincipales": [
+    "Mae Geri",
+    "Gyaku Zuki",
+    "Kanku Dai"
+  ],
+  "normativaVerificada": true
+}
+
+### 8. PATCH - Actualización parcial (solo modificamos la cuota mensual) (HTTP 200 OK)
+PATCH {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "cuotaMensual": 62.50
+}
+
+### 9. ERROR 404 Not Found - Buscar ID inexistente
+GET {{baseUrl}}/9999
+Accept: application/json
+
+### 10. ERROR 400 Bad Request - Fallo múltiple de validaciones @Valid
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "codigoFederacion": "FORMATO-ERRONEO",
+  "nombre": "AB",
+  "paisOrigen": "",
+  "disciplinaOlimpica": true,
+  "cuotaMensual": -25.00,
+  "aniosHistoria": 0,
+  "emailFederacion": "correo-sin-arroba",
+  "fechaFundacion": "2099-01-01",
+  "tecnicasPrincipales": [],
+  "normativaVerificada": false
+}
+
+### 11. ERROR 409 Conflict - Código de federación duplicado en Base de Datos
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "codigoFederacion": "AM-JP-001",
+  "nombre": "Otro Estilo Japones",
+  "paisOrigen": "Japon",
+  "disciplinaOlimpica": false,
+  "cuotaMensual": 45.00,
+  "aniosHistoria": 80,
+  "emailFederacion": "otro@japon.jp",
+  "fechaFundacion": "1940-01-01",
+  "tecnicasPrincipales": ["Kamae"],
+  "normativaVerificada": true
+}
+
+### 12. ERROR 422 Unprocessable Entity - Violación de Regla de Negocio
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "codigoFederacion": "AM-GR-099",
+  "nombre": "Pancracio Olímpico",
+  "paisOrigen": "Grecia",
+  "disciplinaOlimpica": true,
+  "cuotaMensual": 10.00,
+  "aniosHistoria": 2000,
+  "emailFederacion": "pancracio@grecia.gr",
+  "fechaFundacion": "1900-01-01",
+  "tecnicasPrincipales": ["Llave de brazo"],
+  "normativaVerificada": true
+}
+
+### 13. DELETE - Eliminar físicamente un registro (HTTP 204 No Content)
+DELETE {{baseUrl}}/4
